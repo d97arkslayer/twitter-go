@@ -46,3 +46,19 @@ func ExistUser(email string)(Models.User, bool, string){
 	}
 	return result, true, Id
 }
+
+/**
+ * Login
+ * Use to log user
+ */
+func Login(email string, password string) (Models.User, bool)  {
+	user, exist, _ := ExistUser(email)
+	if exist == false {
+		return user, false
+	}
+	compare := Utils.ComparePassword(password, user.Password)
+	if compare == false {
+		return user, false
+	}
+	return user, true
+}

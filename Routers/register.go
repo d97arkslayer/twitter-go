@@ -36,11 +36,9 @@ func Register(w http.ResponseWriter, r *http.Request){
 		http.Error(w, "An error has occurred when trying to insert the information in the database " + err.Error(), http.StatusBadRequest)
 		return
 	}
-
 	if status == false {
 		http.Error(w, "The record could not be inserted into the database", http.StatusBadRequest)
 		return
 	}
-
 	w.WriteHeader(http.StatusCreated)
 }
