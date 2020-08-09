@@ -1,9 +1,10 @@
-package Routers
+package Router
 
 import (
 	"encoding/json"
-	"github.com/d97arkslayer/twitter-go/Database"
 	"github.com/d97arkslayer/twitter-go/Models"
+	"github.com/d97arkslayer/twitter-go/Repositories"
+	"github.com/d97arkslayer/twitter-go/Types"
 	"github.com/d97arkslayer/twitter-go/Utils"
 	"net/http"
 	"time"
@@ -25,7 +26,7 @@ func Login(w http.ResponseWriter, r *http.Request){
 		http.Error(w, "Email is required", http.StatusBadRequest)
 		return
 	}
-	user, exist := Database.Login(u.Email, u.Password)
+	user, exist := Repositories.Login(u.Email, u.Password)
 	if exist == false {
 		http.Error(w, "User or Password INCORRECT", http.StatusBadRequest)
 		return
@@ -35,7 +36,7 @@ func Login(w http.ResponseWriter, r *http.Request){
 	 	http.Error(w, "An error occurred when the JWT was being generated " + err.Error(), http.StatusBadRequest)
 		 return
 	 }
-	response := Models.LoginResponse {
+	response := Types.LoginResponse{
 		Token: jwtKey,
 	}
 	w.Header().Set("Content-Type","application/json")

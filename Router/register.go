@@ -1,9 +1,9 @@
-package Routers
+package Router
 
 import (
 	"encoding/json"
-	"github.com/d97arkslayer/twitter-go/Database"
 	"github.com/d97arkslayer/twitter-go/Models"
+	"github.com/d97arkslayer/twitter-go/Repositories"
 	"net/http"
 )
 
@@ -26,12 +26,12 @@ func Register(w http.ResponseWriter, r *http.Request){
 		http.Error(w, "The password must be contain at least 6 characters", http.StatusBadRequest)
 		return
 	}
-	_,exists,_ := Database.ExistUser(t.Email)
+	_,exists,_ := Repositories.ExistUser(t.Email)
 	if exists == true {
 		http.Error(w, "The user already exist", http.StatusBadRequest)
 		return
 	}
-	_, status, err := Database.InsertUser(t)
+	_, status, err := Repositories.InsertUser(t)
 	if err != nil {
 		http.Error(w, "An error has occurred when trying to insert the information in the database " + err.Error(), http.StatusBadRequest)
 		return

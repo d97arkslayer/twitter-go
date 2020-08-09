@@ -1,7 +1,9 @@
-package Database
+package Repositories
 
 import (
 	"context"
+	"fmt"
+	"github.com/d97arkslayer/twitter-go/Database"
 	"github.com/d97arkslayer/twitter-go/Models"
 	"github.com/d97arkslayer/twitter-go/Utils"
 	"go.mongodb.org/mongo-driver/bson"
@@ -16,7 +18,7 @@ import (
 func InsertUser(user Models.User)(string, bool, error){
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
-	database := MongoConnection.Database("twitter-go")
+	database := Database.MongoConnection.Database("twitter-go")
 	collection := database.Collection("users")
 	user.Password, _ = Utils.EncryptPassword(user.Password)
 	result, err := collection.InsertOne(ctx, user)
@@ -34,7 +36,7 @@ func InsertUser(user Models.User)(string, bool, error){
 func ExistUser(email string)(Models.User, bool, string){
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
-	database := MongoConnection.Database("twitter-go")
+	database := Database.MongoConnection.Database("twitter-go")
 	collection := database.Collection("users")
 
 	condition := bson.M{"email":email}
@@ -61,4 +63,25 @@ func Login(email string, password string) (Models.User, bool)  {
 		return user, false
 	}
 	return user, true
+}
+
+/**
+ * ShowProfile
+ * Use to find a user profile
+ */
+func ShowProfile(Id string)(Models.User, error){
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+	database := Database.MongoConnection.Database("twitter-go")
+	collection := database.Collection("users")
+	var profile Models.User
+	objId, _ := primitive.ObjectIDFromHex(Id)
+	condition := bson.M{ "_id":objId }
+	err := collection.FindOne(ctx, condition).Decode(&profile)
+	profile.Password=""
+	if err != nil {
+		fmt.Println("Profile not found " + err.Error())
+		return profile, err
+	}
+	return profile, nil
 }

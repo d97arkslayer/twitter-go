@@ -2,7 +2,7 @@ package Handlers
 
 import (
 	"github.com/d97arkslayer/twitter-go/Middlewares"
-	"github.com/d97arkslayer/twitter-go/Routers"
+	"github.com/d97arkslayer/twitter-go/Router"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 	"log"
@@ -17,8 +17,9 @@ import (
 func Handlers(){
 	router := mux.NewRouter()
 
-	router.HandleFunc("/register", Middlewares.CheckDB(Routers.Register)).Methods("POST")
-	router.HandleFunc("/login", Middlewares.CheckDB(Routers.Login)).Methods("POST")
+	router.HandleFunc("/register", Middlewares.CheckDB(Router.Register)).Methods("POST")
+	router.HandleFunc("/login", Middlewares.CheckDB(Router.Login)).Methods("POST")
+	router.HandleFunc("/profile/{id}", Middlewares.CheckDB(Middlewares.ValidateJWT(Router.ShowProfile))).Methods("GET")
 
 	PORT := os.Getenv("PORT")
 	if PORT == "" {
