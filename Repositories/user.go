@@ -89,12 +89,50 @@ func ShowProfile(Id string)(Models.User, error){
 	}
 	return profile, nil
 }
-/*
+
 /**
  * UpdateUser
  * Use this to update a user record
  */
-/*
-func UpdateUser(u Models.User, Id, string) (bool, error){
+func UpdateUser(u Models.User, Id string) (bool, error){
+	collection, ctx, cancel := setupConnection("twitter-go", "users")
+	defer cancel()
+	register := make(map[string]interface{})
+	if len(u.Name) > 0 {
+		register["name"] = u.Name
+	}
+	if len(u.Password) > 0 {
+		password,_ := Utils.EncryptPassword(u.Password)
+		register["password"] = password
+	}
+	if len(u.Lastname) > 0 {
+		register["lastname"] = u.Lastname
+	}
+	register["birthDate"] = u.BirthDate
+	if len(u.Avatar) > 0 {
+		register["avatar"] = u.Avatar
+	}
+	if len(u.Banner) > 0 {
+		register["banner"] = u.Banner
+	}
+	if len(u.Biography) > 0 {
+		register["biography"] = u.Biography
+	}
+	if len(u.Location) > 0 {
+		register["location"] = u.Location
+	}
+	if len(u.Website) > 0 {
+		register["website"] = u.Website
+	}
+	updateString := bson.M{
+		"$set":register,
+	}
+	objId, _ := primitive.ObjectIDFromHex(Id)
+	filter := bson.M{"_id": bson.M{"$eq":objId}}
 
-}*/
+	_, err := collection.UpdateOne(ctx,filter,updateString)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
