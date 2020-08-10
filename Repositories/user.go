@@ -38,7 +38,6 @@ func ExistUser(email string)(Models.User, bool, string){
 	defer cancel()
 	database := Database.MongoConnection.Database("twitter-go")
 	collection := database.Collection("users")
-
 	condition := bson.M{"email":email}
 	var result Models.User
 	err := collection.FindOne(ctx, condition).Decode(&result);

@@ -20,7 +20,7 @@ func ShowProfile(w http.ResponseWriter, r *http.Request){
 	}
 	profile, err := Repositories.ShowProfile(Id)
 	if err != nil {
-		http.Error(w, "An error occurred while searching the record" + err.Error(), http.StatusBadRequest)
+		http.Error(w, "An error occurred while searching the record " + err.Error(), http.StatusBadRequest)
 		return
 	}
 
