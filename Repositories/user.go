@@ -1,27 +1,13 @@
 package Repositories
 
 import (
-	"context"
 	"fmt"
-	"github.com/d97arkslayer/twitter-go/Database"
 	"github.com/d97arkslayer/twitter-go/Models"
 	"github.com/d97arkslayer/twitter-go/Utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
-	"time"
 )
 
-/**
- * setupConnection
- * Use this to do operations over collection Users
- */
-func setupConnection(db string, coll string) (*mongo.Collection, context.Context, context.CancelFunc){
-	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
-	database := Database.MongoConnection.Database(db)
-	collection := database.Collection(coll)
-	return collection, ctx, cancel
-}
 /**
  * InsertUser
  * This function inserts a new user in mongo
