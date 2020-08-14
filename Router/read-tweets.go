@@ -8,6 +8,10 @@ import (
 	"strconv"
 )
 
+/**
+ * GetTweets
+ * Handler to get all tweets
+ */
 func GetTweets(w http.ResponseWriter, r *http.Request){
 	vars := mux.Vars(r)
 	id := vars["id"]

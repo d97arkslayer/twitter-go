@@ -58,6 +58,22 @@ func GetTweets(id string, page int64)([]*Models.Tweet, bool)  {
 		}
 		results = append(results, &tweet)
 	}
-
 	return results, true
+}
+
+/**
+ * DeleteTweet
+ * Use this function to delete a tweet
+ */
+func DeleteTweet(id string, userId string)(error){
+	collection, ctx, cancel := setupConnection("twitter-go", "tweet")
+	defer cancel()
+	objId, _ := primitive.ObjectIDFromHex(id)
+	condition := bson.M{
+		"_id":objId,
+		"userId": userId,
+	}
+	_, err := collection.DeleteOne(ctx, condition)
+	return err
+
 }
