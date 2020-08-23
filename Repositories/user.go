@@ -96,7 +96,7 @@ func UpdateUser(u Models.User, Id string) (bool, error){
 	}
 	register["birthDate"] = u.BirthDate
 	if len(u.Avatar) > 0 {
-		register["avatar"] = u.Avatar
+		register["Avatars"] = u.Avatar
 	}
 	if len(u.Banner) > 0 {
 		register["banner"] = u.Banner
