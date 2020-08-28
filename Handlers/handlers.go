@@ -28,7 +28,8 @@ func Handlers(){
 	router.HandleFunc("/upload-banner", Middlewares.CheckDB(Middlewares.ValidateJWT(Router.UploadBanner))).Methods("POST")
 	router.HandleFunc("/get-avatar/{id}", Middlewares.CheckDB(Router.GetAvatar)).Methods("GET")
 	router.HandleFunc("/get-banner/{id}", Middlewares.CheckDB(Router.GetBanner)).Methods("GET")
-	router.HandleFunc("/store-relation/{id}", Middlewares.CheckDB(Middlewares.ValidateJWT(Router.HighRelation))).Methods("POST")
+	router.HandleFunc("/relation/{id}", Middlewares.CheckDB(Middlewares.ValidateJWT(Router.HighRelation))).Methods("POST")
+	router.HandleFunc("/relation/{id}", Middlewares.CheckDB(Middlewares.ValidateJWT(Router.DeleteRelation))).Methods("DELETE")
 
 	PORT := os.Getenv("PORT")
 	if PORT == "" {
