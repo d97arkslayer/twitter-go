@@ -1,11 +1,9 @@
 package Repositories
 
 import (
-	"context"
 	"errors"
 	"github.com/d97arkslayer/twitter-go/Models"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 /**
@@ -15,7 +13,7 @@ import (
 func StoreRelation(relation Models.Relation)(bool, error){
 	collection, ctx, cancel := setupConnection("twitter-go", "relation")
 	defer cancel()
-	exists,_ := findRelation(relation, *collection, ctx)
+	exists,_ := FindRelation(relation)
 	if exists == true {
 		return false, errors.New("the relation already exist")
 	}
@@ -33,7 +31,7 @@ func StoreRelation(relation Models.Relation)(bool, error){
 func DeleteRelation(relation Models.Relation)(bool, error){
 	collection, ctx, cancel := setupConnection("twitter-go", "relation")
 	defer cancel()
-	exists, err := findRelation(relation, *collection, ctx)
+	exists, err := FindRelation(relation)
 	if err != nil {
 		return false, err
 	}
@@ -48,10 +46,12 @@ func DeleteRelation(relation Models.Relation)(bool, error){
 }
 
 /**
- * findRelation
+ * FindRelation
  * use to find an existent relation
  */
-func findRelation(relation Models.Relation, collection mongo.Collection,ctx context.Context)(bool, error){
+func FindRelation(relation Models.Relation)(bool, error){
+	collection, ctx, cancel := setupConnection("twitter-go", "relation")
+	defer cancel()
 	filter := bson.M{"userId": bson.M{"$eq": relation.UserId}, "userRelationId": bson.M{"$eq": relation.UserRelationId}}
 	var existRelation Models.Relation
 	err := collection.FindOne(ctx,filter).Decode(&existRelation)

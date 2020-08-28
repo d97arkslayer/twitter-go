@@ -16,7 +16,7 @@ func DeleteRelation(w http.ResponseWriter, r *http.Request){
 	vars := mux.Vars(r)
 	id := vars["id"]
 	if len(id) < 1 {
-		http.Error(w, "You must provide a tweet id", http.StatusBadRequest)
+		http.Error(w, "You must provide a user relation id", http.StatusBadRequest)
 		return
 	}
 	var relation Models.Relation
