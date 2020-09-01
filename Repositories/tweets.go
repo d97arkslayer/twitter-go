@@ -3,6 +3,7 @@ package Repositories
 import (
 	"context"
 	"github.com/d97arkslayer/twitter-go/Models"
+	"github.com/d97arkslayer/twitter-go/Types"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -75,5 +76,37 @@ func DeleteTweet(id string, userId string)(error){
 	}
 	_, err := collection.DeleteOne(ctx, condition)
 	return err
+
+}
+
+/**
+ * TweetsFollowers
+ * Use to get the tweets from the followers
+ */
+func TweetsFollowers(id string, page int) ([] Types.TweetsFollowers, bool) {
+	collection, ctx, cancel := setupConnection("twitter-go", "relation")
+	defer cancel()
+	skip := (page - 1) * 20
+	conditions := make([]bson.M, 0)
+	conditions = append(conditions, bson.M{"$match":bson.M{"userId":id}})
+	conditions = append(conditions, bson.M{
+		"$lookup": bson.M{
+			"from": "tweet",
+			"localField": "userRelationId",
+			"foreignField": "userId",
+			"as": "tweet",
+		},
+	})
+	conditions = append(conditions, bson.M{"$unwind": "$tweet"})
+	conditions = append(conditions, bson.M{"$sort": bson.M{"tweet.date": -1}})
+	conditions = append(conditions, bson.M{"$skip": skip})
+	conditions = append(conditions, bson.M{"$limit": 20})
+	cursor, err := collection.Aggregate(ctx, conditions)
+	var tweets []Types.TweetsFollowers
+	err = cursor.All(ctx, &tweets)
+	if err != nil {
+		return tweets, false
+	}
+	return tweets, true
 
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/d97arkslayer/twitter-go/Utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 /**
@@ -121,4 +122,66 @@ func UpdateUser(u Models.User, Id string) (bool, error){
 		return false, err
 	}
 	return true, nil
+}
+/**
+ * IndexUsers
+ * Use to find all relations
+ */
+func IndexUsers(id string, page int64, search string, searchType string) ([] *Models.User, bool){
+	collection, ctx, cancel := setupConnection("twitter-go", "users")
+	defer cancel()
+	var users []*Models.User
+
+	findOptions := options.Find()
+	findOptions.SetSkip((page-1)*20)
+	findOptions.SetLimit(20)
+
+	query := bson.M{
+		"name": bson.M{"$regex": `(?i)`+ search},
+	}
+
+	cursor, err := collection.Find(ctx, query, findOptions)
+	if err != nil {
+		fmt.Println(err.Error())
+		return users, false
+	}
+	var found, include bool
+	for cursor.Next(ctx){
+		var u Models.User
+		err := cursor.Decode(&u)
+		if err != nil {
+			fmt.Println(err.Error())
+			return users, false
+		}
+		var r Models.Relation
+		r.UserId = id
+		r.UserRelationId = u.Id.Hex()
+		include = false
+		found, err = FindRelation(r)
+		if (searchType == "new" && found == false) || (searchType == "follow" && found == true) {
+			include = true
+		}
+		if r.UserRelationId == id {
+			include = false
+		}
+
+		if include == true {
+			u.Password = ""
+			u.Biography = ""
+			u.Website = ""
+			u.Location = ""
+			u.Banner = ""
+			u.Email = ""
+
+			users = append(users, &u)
+		}
+
+	}
+	err = cursor.Err()
+	if err != nil {
+		fmt.Println(err.Error())
+		return users, false
+	}
+	cursor.Close(ctx)
+	return users, true
 }

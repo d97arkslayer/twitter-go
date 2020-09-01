@@ -31,6 +31,8 @@ func Handlers(){
 	router.HandleFunc("/relation/{id}", Middlewares.CheckDB(Middlewares.ValidateJWT(Router.HighRelation))).Methods("POST")
 	router.HandleFunc("/relation/{id}", Middlewares.CheckDB(Middlewares.ValidateJWT(Router.DeleteRelation))).Methods("DELETE")
 	router.HandleFunc("/relation/{id}", Middlewares.CheckDB(Middlewares.ValidateJWT(Router.FindRelation))).Methods("GET")
+	router.HandleFunc("/users", Middlewares.CheckDB(Middlewares.ValidateJWT(Router.IndexUsers))).Methods("GET")
+	router.HandleFunc("/tweets", Middlewares.CheckDB(Middlewares.ValidateJWT(Router.GetTweetsFollowers))).Methods("GET")
 
 	PORT := os.Getenv("PORT")
 	if PORT == "" {
