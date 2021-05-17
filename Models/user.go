@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+
 /**
  * User
  * Model user
